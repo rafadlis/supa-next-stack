@@ -1,0 +1,84 @@
+---
+description: How to fetching the database
+globs: 
+---
+# Database Fetching Guidelines
+
+## General Principles
+- Use `Supabase-js` as the primary database operations library
+- Always export TypeScript types for fetching results
+- Choose the appropriate client based on where the fetching occurs (client-side vs server-side)
+
+## Client-Side Fetching (`use client`)
+
+1. Import the client:
+```typescript
+import { createSupabaseClient } from "@/supabase/client";
+```
+
+2. Create fetch function:
+```typescript:app/example/lib/queries.ts
+// This function will be used with useQuery
+export async function getJadwalKelas() {
+  const supabase = await createSupabaseClient();
+  const { data, error } = await supabase
+    .from("jadwal")
+    .select("*");
+    
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+// Always export the type
+export type JadwalKelasType = Awaited<ReturnType<typeof getJadwalKelas>>;
+```
+
+3. Use with React Query:
+```typescript:app/example/components/JadwalList.tsx
+'use client'
+
+import { useQuery } from '@tanstack/react-query';
+import { getJadwalKelas } from '../lib/queries';
+
+export function JadwalList() {
+  const { data, isLoading } = useQuery({
+    queryKey: ['jadwal'],
+    queryFn: getJadwalKelas
+  });
+  
+  // ... rest of component
+}
+```
+
+## Server-Side Fetching (SSR or `use server`)
+
+1. Import the server client:
+```typescript
+import { createSupabaseClient } from "@/supabase/server";
+```
+
+2. Create fetch function:
+```typescript:app/example/lib/actions.ts
+'use server'
+
+export async function getJadwalKelas() {
+  const supabase = await createSupabaseClient();
+  const { data, error } = await supabase
+    .from("jadwal")
+    .select("*");
+    
+  if (error) throw new Error(error.message);
+  return data;
+}
+
+// Always export the type
+export type JadwalKelasType = Awaited<ReturnType<typeof getJadwalKelas>>;
+```
+
+## Important Notes
+- Use `@/supabase/client` for client-side operations
+- Use `@/supabase/server` for server-side operations
+- Files without directives default to server-side rendering
+- Always handle errors appropriately
+- Always type your data using TypeScript
+- Place fetch functions in appropriate feature folders following the project structure

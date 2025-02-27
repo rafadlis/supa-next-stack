@@ -1,0 +1,8 @@
+---
+description: How to create toast or notifications
+globs: 
+alwaysApply: false
+---
+
+- Use `sonner` from `shadcn` as toast or notifications that set up in the root layout
+- Deliver simple and clean message in the toast

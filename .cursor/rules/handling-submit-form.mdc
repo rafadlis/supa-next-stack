@@ -1,0 +1,96 @@
+---
+description: Form and Form Submit
+globs: 
+alwaysApply: false
+---
+# Form Implementation Guidelines
+
+## Core Setup
+- Use Shadcn's `Form` or [form.tsx](mdc:components/ui/form.tsx) component integrated with Zod schema validation
+- Import required components:
+```tsx
+import { Form } from "@/components/ui/form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import * as z from "zod"
+import { useTransition } from "react"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
+```
+
+
+## Form Schema & Types
+```typescript
+// Define your Zod schema
+const formSchema = z.object({
+  // your schema definition
+})
+
+// Type inference for form values
+type FormValues = z.infer<typeof formSchema>
+```
+
+
+## Form Implementation Example
+```typescript
+export function MyForm() {
+  const [isSubmitting, startTransition] = useTransition()
+  const router = useRouter()
+  
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      // your default values
+    }
+  })
+
+  function onSubmit(values: FormValues) {
+    startTransition(() => {
+      // If you don't have a server action yet, you can use console.log
+      // to test the form submission
+      if (!serverAction) {
+        console.log('Form Values:', values)
+        return
+      }
+
+      toast.promise(
+        serverAction(values), // your server action
+        {
+          loading: "Sedang memproses...",
+          success: (data) => {
+            router.refresh()
+            return data.message
+          },
+          error: "Terjadi kesalahan"
+        }
+      )
+    })
+  }
+
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)}>
+        {/* your form fields */}
+      </form>
+    </Form>
+  )
+}
+```
+
+
+## Key Features
+- Uses React's `useTransition` for loading states
+- Integrates toast notifications with promise handling
+- Automatic type inference from Zod schema
+- Server action integration with proper error handling
+- Automatic form validation based on Zod schema
+- Router refresh after successful submission
+
+## Best Practices
+- Always define Zod schema separately for reusability
+- Use type inference from Zod schema for form values
+- Implement proper loading states using `useTransition`
+- Handle success and error cases with toast notifications
+- Refresh the router after successful submissions
+- Use server actions for form submission handling
+- don't use `async` when calling the server action

@@ -1,0 +1,28 @@
+# UI Development Guidelines
+
+## Component Library and Styling
+
+### Primary Components
+- The project uses `shadcn` as the primary component library
+- All base `shadcn` components are located in the `@/components/ui` directory
+- Before creating new components, check the existing ones in `@/components/ui`
+
+### Styling Hierarchy
+1. First priority: Use styles from `globals.css`
+2. Second priority: Use `tailwindcss` utility classes
+3. For enhanced UI components: Reference designs from `orginui.com`
+
+## Layout and Spacing Guidelines
+
+### Visual Hierarchy
+- Maintain consistent spacing throughout the application
+- Follow the proximity principle: Related components should be placed closer together
+- Use spacing to indicate relationships between elements:
+  - Closer spacing = Stronger relationship
+  - Wider spacing = Weaker relationship
+
+## Best Practices
+- Always check `@/components/ui` before adding new shadcn components
+- Leverage existing styles from `globals.css` before creating new ones
+- Use `tailwindcss` for custom styling when global styles don't meet needs
+- Reference `orginui.com` for refined UI patterns and component variations 
